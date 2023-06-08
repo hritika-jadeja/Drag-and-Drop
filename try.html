@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+    }
+    .container {
+      display: flex;
+      margin: 20px;
+    }
+    .container1 {
+      background-color: #f1f1f1;
+      flex: 1;
+      padding: 10px;
+      border-radius: 5px;
+    }
+    .container2 {
+      background-color: #e1e1e1;
+      flex: 1;
+      padding: 10px;
+      border-radius: 5px;
+    }
+    .item {
+      width: 100px;
+      height: 100px;
+      background-color: #b3b3b3;
+      margin: 5px;
+      padding: 10px;
+      cursor: move;
+      border-radius: 5px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+    }
+    .success {
+      background-color: #c1f0c1 !important;
+    }
+    .success-message {
+      display: none;
+      padding: 10px;
+      background-color: #c1f0c1;
+      color: #008000;
+      font-weight: bold;
+      text-align: center;
+      margin-top: 20px;
+      border-radius: 5px;
+    }
+    .reset-button {
+      background-color: #333;
+      color: #fff;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+  </style>
+  <script>
+    document.addEventListener("DOMContentLoaded", function() {
+      const items = document.querySelectorAll(".item");
+      const firstContainer = document.getElementById("first-container");
+      const secondContainer = document.getElementById("second-container");
+
+      // Add event listeners to each item for drag and drop functionality
+      items.forEach(function(item) {
+        item.addEventListener("dragstart", dragStart);
+        item.addEventListener("dragend", dragEnd);
+      });
+
+      // Drag start event handler
+      function dragStart(e) {
+        e.dataTransfer.setData("text/plain", e.target.id);
+        e.target.classList.add("dragging");
+      }
+
+      // Drag end event handler
+      function dragEnd(e) {
+        e.target.classList.remove("dragging");
+      }
+
+      // Second container drop event handlers
+      secondContainer.addEventListener("dragover", dragOver);
+      secondContainer.addEventListener("dragenter", dragEnter);
+      secondContainer.addEventListener("dragleave", dragLeave);
+      secondContainer.addEventListener("drop", drop);
+
+      // Drag over event handler (prevents default behavior)
+      function dragOver(e) {
+        e.preventDefault();
+      }
+
+      // Drag enter event handler
+      function dragEnter(e) {
+        e.target.classList.add("drag-over");
+      }
+
+      // Drag leave event handler
+      function dragLeave(e) {
+        e.target.classList.remove("drag-over");
+      }
+
+      // Drop event handler
+      function drop(e) {
+        e.preventDefault();
+        const itemId = e.dataTransfer.getData("text/plain");
+        const item = document.getElementById(itemId);
+        item.classList.remove("dragging");
+        item.classList.add("success");
+        secondContainer.appendChild(item);
+        displaySuccessMessage();
+      }
+
+      // Display success message
+      function displaySuccessMessage() {
+        const successMessage = document.getElementById("success-message");
+        successMessage.style.display = "block";
+      }
+
+      // Reset button click event handler
+      const resetButton = document.getElementById("reset-button");
+      resetButton.addEventListener("click", reset);
+
+      // Reset function
+      function reset() {
+        secondContainer.innerHTML = "";
+        items.forEach(function(item) {
+          item.classList.remove("success");
+          firstContainer.appendChild(item);
+        });
+        const successMessage = document.getElementById("success-message");
+        successMessage.style.display = "none";
+      }
+    });
+  </script>
+</head>
+<body>
+  <div class="container">
+    <div id="first-container" class="container1">
+      <div class="item" draggable="true" id="item1">Item 1</div>
+      <div class="item" draggable="true" id="item2">Item 2</div>
+      <div class="item" draggable="true" id="item3">Item 3</div>
+    </div>
+    <div id="second-container" class="container2"></div>
+  </div>
+  <button id="reset-button" class="reset-button">Reset</button>
+  <p id="success-message" class="success-message">Success! Item dropped into the second container.</p>
+</body>
+</html>
